@@ -37,8 +37,11 @@ const ProductDetail = () => {
     fetchProductDetails();
   }, [id]);
 
-  const handleVariantChange = (variant) => {
-    setSelectedVariant(variant);
+  const handleVariantChange = (variantId) => {
+    console.log("variantId", variantId);
+    const selected = product.masterData.current.variants.find(v => v.sku === variantId) || product.masterData.current.masterVariant;
+    console.log("variant", selected);
+    setSelectedVariant(selected);
   };
 
   const handleAddToCart = () => {
@@ -92,26 +95,27 @@ const ProductDetail = () => {
     </div>
   );*/
   return (
-    <div className="product-detail">
-      <h2>{product.masterData.current.name.en}</h2>
-      <img src={selectedVariant.images[0]?.url} alt={product.masterData.current.name.en} />
-      <p>{(selectedVariant.prices[0].value.centAmount / 100).toFixed(selectedVariant.prices[0].value.fractionDigits)} {selectedVariant.prices[0].value.currencyCode}</p>
-      <h3>Variants</h3>
-      <select onChange={(e) => handleVariantChange(product.masterData.current.variants.find((v) => v.id === e.target.value))}>
-        {product.masterData.current.variants.map((variant) => (
-          <option key={variant.id} value={variant.id}>{variant.sku}</option>
-        ))}
-      </select>
-      <div>
-        {isLoggedIn ? (
-          <div>
-            <button onClick={handleAddToCart}>Add to Cart</button>
-          </div>
-        ) : (
-          <p>Please click on <a href="/login">log in</a> to add items to your cart.</p>
-        )}
+      <div className="product-detail">
+        <h2>{product.masterData.current.name.en}</h2>
+        <img src={selectedVariant.images[0]?.url} alt={product.masterData.current.name.en} />
+        <p>{(selectedVariant.prices[0].value.centAmount / 100).toFixed(selectedVariant.prices[0].value.fractionDigits)} {selectedVariant.prices[0].value.currencyCode}</p>
+        <h3>Variants</h3>
+        <select onChange={(e) => handleVariantChange(e.target.value)}>
+          <option value={product.masterData.current.masterVariant.id}>{product.masterData.current.masterVariant.sku}</option>
+          {product.masterData.current.variants.map((variant) => (
+              <option key={variant.sku} value={variant.sku}>{variant.sku}</option>
+          ))}
+        </select>
+        <div>
+          {isLoggedIn ? (
+              <div>
+                <button onClick={handleAddToCart}>Add to Cart</button>
+              </div>
+          ) : (
+              <p>Please click on <a href="/login">log in</a> to add items to your cart.</p>
+          )}
+        </div>
       </div>
-    </div>
   );
 };
 
